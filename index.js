@@ -33,10 +33,10 @@ app.get('/monitor', async (req, res) => {
     let m3u8Urls = [];
     page.on('request', (req) => {
       const url = req.url();
-      if (url.endsWith('.m3u8')) {
+      // if (url.endsWith('.m3u8')) {
         console.log(`m3u8 file requested: ${url}`);
         m3u8Urls.push(url);
-      }
+      // }
       req.continue();
     });
 
@@ -44,7 +44,7 @@ app.get('/monitor', async (req, res) => {
     await page.goto(targetURL, { waitUntil: 'networkidle2' });
 
     // Wait for 30 seconds to ensure all network requests are captured
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 200));
 
     // Close the browser
     await browser.close();
@@ -65,7 +65,10 @@ app.get('/hdhub4u', async (req, res) => {
     const targetURL = req.query.url || 'https://hdstream4u.com/file/tfqcy2shtutk';
     
     // Launch Puppeteer
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
     const page = await browser.newPage();
 
     // Intercept network requests
@@ -84,7 +87,7 @@ app.get('/hdhub4u', async (req, res) => {
     await page.goto(targetURL, { waitUntil: 'networkidle2' });
 
     // Wait for 30 seconds to ensure all network requests are captured
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 200));
 
     // Close the browser
     await browser.close();
