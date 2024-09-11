@@ -33,10 +33,10 @@ app.get('/monitor', async (req, res) => {
     let m3u8Urls = [];
     page.on('request', (req) => {
       const url = req.url();
-      // if (url.endsWith('.m3u8')) {
+      if (url.endsWith('.m3u8')) {
         console.log(`m3u8 file requested: ${url}`);
         m3u8Urls.push(url);
-      // }
+      }
       req.continue();
     });
 
@@ -44,7 +44,7 @@ app.get('/monitor', async (req, res) => {
     await page.goto(targetURL, { waitUntil: 'networkidle2' });
 
     // Wait for 30 seconds to ensure all network requests are captured
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise(resolve => setTimeout(resolve, 7000));
 
     // Close the browser
     await browser.close();
