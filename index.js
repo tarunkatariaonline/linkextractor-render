@@ -66,6 +66,7 @@ app.get('/monitor', async (req, res) => {
 
 
 app.get('/hdhub4u', async (req, res) => {
+  let m3u8Urls = [];
   try {
     // Set the target URL from query params or hardcoded
     const targetURL = req.query.url || 'https://hdstream4u.com/file/tfqcy2shtutk';
@@ -79,7 +80,7 @@ app.get('/hdhub4u', async (req, res) => {
 
     // Intercept network requests
     await page.setRequestInterception(true);
-    let m3u8Urls = [];
+   
     page.on('request', (req) => {
       const url = req.url();
       if (url.includes('.m3u8')) {
@@ -102,7 +103,10 @@ app.get('/hdhub4u', async (req, res) => {
     res.json({ m3u8Urls });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error capturing the m3u8 file');
+    res.status(500).json({
+      message:"Error in m3u8 link caputureing",
+      links:m3u8Urls
+    });
   }
 });
 
