@@ -18,6 +18,7 @@ app.get('/',async(req,res)=>{
   })
 })
 app.get('/monitor', async (req, res) => {
+  let m3u8Urls = [];
   try {
     // Set the target URL from query params or hardcoded
     const targetURL = req.query.url || 'https://videoplayertarun.vercel.app/';
@@ -59,7 +60,10 @@ app.get('/monitor', async (req, res) => {
     res.json({ m3u8Urls });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error capturing the m3u8 file');
+    res.status(500).json({
+      message: 'Error occurred while monitoring the target URL.',
+      m3u8Urls
+    });
   }
 });
 
@@ -94,7 +98,7 @@ app.get('/hdhub4u', async (req, res) => {
     await page.goto(targetURL, { waitUntil: 'networkidle2' });
 
     // Wait for 30 seconds to ensure all network requests are captured
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
     // Close the browser
     await browser.close();
