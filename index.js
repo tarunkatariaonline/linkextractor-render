@@ -1,4 +1,5 @@
 const express = require('express');
+const { timeout } = require('puppeteer-core');
 const puppeteer = require('puppeteer-extra');
 require('dotenv').config()
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
@@ -36,15 +37,18 @@ app.get('/monitor', async (req, res) => {
       if (url.endsWith('.m3u8')) {
         console.log(`m3u8 file requested: ${url}`);
         m3u8Urls.push(url);
+        return res.json({
+          message:m3u8Urls
+        })
       }
       req.continue();
     });
 
     // Go to the target URL
-    await page.goto(targetURL, { waitUntil: 'networkidle2' });
+    await page.goto(targetURL, { waitUntil: 'networkidle2',timeout:12000 });
 
     // Wait for 30 seconds to ensure all network requests are captured
-    await new Promise(resolve => setTimeout(resolve, 7000));
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
     // Close the browser
     await browser.close();
