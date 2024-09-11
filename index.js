@@ -1,5 +1,6 @@
 const express = require('express');
 const puppeteer = require('puppeteer-extra');
+require('dotenv').config()
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 puppeteer.use(StealthPlugin());
@@ -21,7 +22,18 @@ app.get('/monitor', async (req, res) => {
     const targetURL = req.query.url || 'https://videoplayertarun.vercel.app/';
     
     // Launch Puppeteer
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({
+      args: [
+        "--disable-setuid-sandbox",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote",
+      ],
+      executablePath:
+        process.env.NODE_ENV === "production"
+          ? process.env.PUPPETEER_EXECUTABLE_PATH
+          : puppeteer.executablePath(),
+    });
     const page = await browser.newPage();
 
     // Intercept network requests
@@ -94,7 +106,7 @@ app.get('/hdhub4u', async (req, res) => {
 });
 
 // Start the Express server
-const PORT = 3000;
+const PORT = process.env.PORT|| 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
