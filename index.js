@@ -18,7 +18,7 @@ app.get('/',async(req,res)=>{
   })
 })
 app.get('/monitor', async (req, res) => {
-  let m3u8Urls = [];
+  let globalurls = [];
   try {
     // Set the target URL from query params or hardcoded
     const targetURL = req.query.url || 'https://videoplayertarun.vercel.app/';
@@ -40,9 +40,11 @@ app.get('/monitor', async (req, res) => {
     let m3u8Urls = [];
     page.on('request', (req) => {
       const url = req.url();
+      console.log(`url requested: ${url}`);
       if (url.endsWith('.m3u8')) {
-        console.log(`m3u8 file requested: ${url}`);
+        
         m3u8Urls.push(url);
+        globalurls.push(url)
       }
       req.continue();
     });
@@ -57,12 +59,12 @@ app.get('/monitor', async (req, res) => {
     await browser.close();
 
     // Return the captured m3u8 URLs as a response
-    res.json({ m3u8Urls });
+    res.json({ m3u8Urls,globalurls });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       message: 'Error occurred while monitoring the target URL.',
-      m3u8Urls
+      globalurls
     });
   }
 });
