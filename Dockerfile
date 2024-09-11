@@ -1,5 +1,5 @@
 # Base image
-FROM node:16
+FROM node:20
 
 # Install necessary dependencies for Puppeteer
 RUN apt-get update && \
