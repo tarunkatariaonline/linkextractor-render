@@ -1,11 +1,30 @@
-FROM ghcr.io/puppeteer/puppeteer:23.3.0
+# Base image
+FROM node:16
 
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/snap/bin/chromium
+# Install necessary dependencies for Puppeteer
+RUN apt-get update && \
+    apt-get install -yq libgconf-2-4 \
+    libxss1 \
+    libnss3 \
+    libasound2 \
+    fonts-liberation \
+    libappindicator3-1 \
+    xdg-utils \
+    libgbm-dev \
+    && apt-get clean
 
+# Create app directory
+WORKDIR /usr/src/app
 
-WORKDIR /usr/src/app    
+# Install app dependencies
 COPY package*.json ./
-RUN npm ci
+RUN npm install
+
+# Bundle app source
 COPY . .
-CMD [ "node", "index.js" ]
+
+# Expose the port
+EXPOSE 3000
+
+# Command to start the app
+CMD ["node", "index.js"]

@@ -23,8 +23,16 @@ app.get('/monitor', async (req, res) => {
     
     // Launch Puppeteer
     const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: [
+        "--disable-setuid-sandbox",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote",
+      ],
+      executablePath:
+        process.env.NODE_ENV === "production"
+          ? process.env.PUPPETEER_EXECUTABLE_PATH
+          : puppeteer.executablePath(),
     });
     const page = await browser.newPage();
 
@@ -62,7 +70,7 @@ app.get('/monitor', async (req, res) => {
 app.get('/hdhub4u', async (req, res) => {
   try {
     // Set the target URL from query params or hardcoded
-    const targetURL = req.query.url || 'https://hdstream4u.com/file/tfqcy2shtutk';
+    const targetURL = req.query.url || 'https://videoplayertarun.vercel.app/';
     
     // Launch Puppeteer
     const browser = await puppeteer.launch({ headless: true });
