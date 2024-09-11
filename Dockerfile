@@ -1,7 +1,7 @@
 FROM ghcr.io/puppeteer/puppeteer:23.3.0
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/snap/bin/chromium
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
 
 
 WORKDIR /usr/src/app    
