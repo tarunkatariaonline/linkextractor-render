@@ -25,7 +25,12 @@ app.get('/monitor', async (req, res) => {
     // Launch Puppeteer
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-infobars',
+        '--window-size=1920,1080',
+        '--disable-dev-shm-usage',
+        '--disable-extensions',
+        '--disable-gpu',
+        '--disable-blink-features=AutomationControlled',]
     });
     const page = await browser.newPage();
 
@@ -37,9 +42,6 @@ app.get('/monitor', async (req, res) => {
       if (url.endsWith('.m3u8')) {
         console.log(`m3u8 file requested: ${url}`);
         m3u8Urls.push(url);
-        return res.json({
-          message:m3u8Urls
-        })
       }
       req.continue();
     });
