@@ -47,10 +47,10 @@ app.get('/monitor', async (req, res) => {
     });
 
     // Go to the target URL
-    await page.goto(targetURL, { waitUntil: 'networkidle2',timeout:12000 });
+    await page.goto(targetURL, { waitUntil: 'networkidle2'});
 
     // Wait for 30 seconds to ensure all network requests are captured
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, 9000));
 
     // Close the browser
     await browser.close();
