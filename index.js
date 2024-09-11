@@ -1,12 +1,20 @@
 const express = require('express');
 const { timeout } = require('puppeteer-core');
 const puppeteer = require('puppeteer-extra');
+var cors = require('cors')
 require('dotenv').config()
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 puppeteer.use(StealthPlugin());
 
 const app = express();
+
+
+app.use(cors({
+  
+  origin:"*",
+  methods: ["GET", "POST"],
+}))
 
 // Define a route to trigger Puppeteer
 
@@ -50,10 +58,10 @@ app.get('/monitor', async (req, res) => {
     });
 
     // Go to the target URL
-    await page.goto(targetURL, { waitUntil: 'networkidle2'});
+    await page.goto(targetURL, { waitUntil: 'networkidle2',timeout:120000});
 
     // Wait for 30 seconds to ensure all network requests are captured
-    await new Promise(resolve => setTimeout(resolve, 9000));
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
     // Close the browser
     await browser.close();
