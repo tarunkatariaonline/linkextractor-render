@@ -26,7 +26,7 @@ app.get('/',async(req,res)=>{
   })
 })
 app.get('/monitor', async (req, res) => {
-  let globalurls = [];
+
   try {
     // Set the target URL from query params or hardcoded
     const targetURL = req.query.url || 'https://videoplayertarun.vercel.app/';
@@ -46,33 +46,41 @@ app.get('/monitor', async (req, res) => {
     // Intercept network requests
     await page.setRequestInterception(true);
     let m3u8Urls = [];
-    page.on('request', (req) => {
+
+    
+    page.on('request', async(req) => {
       const url = req.url();
+      const resourceType = req.resourceType();
       console.log(`url requested: ${url}`);
+     
       if (url.endsWith('.m3u8')) {
         
+        
         m3u8Urls.push(url);
-        globalurls.push(url)
+     
+      
+      }else if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+        req.abort();  // Block unnecessary resources
+      } else {
+        req.continue();
       }
-      req.continue();
     });
 
     // Go to the target URL
     await page.goto(targetURL, { waitUntil: 'networkidle2'});
 
     // Wait for 30 seconds to ensure all network requests are captured
-    await new Promise(resolve => setTimeout(resolve, 7000));
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
     // Close the browser
     await browser.close();
 
     // Return the captured m3u8 URLs as a response
-    res.json({ m3u8Urls,globalurls });
+    res.json({ m3u8Urls });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      message: 'Error occurred while monitoring the target URL.',
-      globalurls
+      message: 'Error occurred while monitoring the target URL.'
     });
   }
 });
